@@ -33,7 +33,7 @@ participant server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     activate server
-    server-->>browser: Json Data - HTTP 200
+    server-->>browser: Json Data: [{ "content": "", "date": "2024-1-1" }, ... ]
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
