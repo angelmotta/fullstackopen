@@ -6,15 +6,9 @@ const Content = (props) => {
     const { part1, exercises1, part2, exercises2, part3, exercises3 } = props;
     return (
         <>
-            <p>
-                {part1} {exercises1}
-            </p>
-            <p>
-                {part2} {exercises2}
-            </p>
-            <p>
-                {part3} {exercises3}
-            </p>
+            <Part name={part1} number={exercises1} />
+            <Part name={part2} number={exercises2} />
+            <Part name={part1} number={exercises1} />
         </>
     );
 };
@@ -22,6 +16,15 @@ const Content = (props) => {
 const Total = (props) => {
     const { exercises1, exercises2, exercises3 } = props;
     return <p>Number of exercises {exercises1 + exercises2 + exercises3}</p>;
+};
+
+const Part = (props) => {
+    const { name, number } = props;
+    return (
+        <p>
+            {name} {number}
+        </p>
+    );
 };
 
 const App = () => {
