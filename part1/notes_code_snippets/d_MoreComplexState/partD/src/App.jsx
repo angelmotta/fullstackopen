@@ -7,6 +7,8 @@ const History = (props) => {
     return <div>button press history: {props.allClicks.join(" ")}</div>;
 };
 
+const Display = (props) => <div>{props.value}</div>;
+
 const Button = ({ handleClick, text }) => (
     <button onClick={handleClick}>{text}</button>
 );
@@ -14,9 +16,17 @@ const Button = ({ handleClick, text }) => (
 const App = () => {
     const [left, setLeft] = useState(0);
     const [right, setRight] = useState(0);
-
     const [allClicks, setAll] = useState([]);
     const [total, setTotal] = useState(0);
+
+    const [value, setValue] = useState(10);
+
+    const hello = (who) => () => console.log("hello ", who);
+
+    const setToValue = (newValue) => {
+        console.log("value now", newValue); // print the new value to console
+        setValue(newValue);
+    };
 
     const handleLeftClick = () => {
         setAll(allClicks.concat("L")); // concat return a new array
@@ -44,6 +54,15 @@ const App = () => {
 
             <History allClicks={allClicks} />
             <p>total {total}</p>
+
+            <br />
+            <p>Closures</p>
+            <div>
+                <Display value={value} />
+                <Button handleClick={() => setToValue(1000)} text="thousand" />
+                <Button handleClick={() => setToValue(0)} text="reset" />
+                <Button handleClick={() => setToValue(value + 1)} text="+1" />
+            </div>
         </div>
     );
 };
