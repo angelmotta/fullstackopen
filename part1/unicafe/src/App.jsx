@@ -8,9 +8,10 @@ const Statistics = ({
     average,
     positivePorcentage,
 }) => {
-    return (
+    return allCounter === 0 ? (
+        <>No feedback given</>
+    ) : (
         <>
-            <h1>Statistics</h1>
             <p>Good {goodCounter}</p>
             <p>Neutral {neutralCounter}</p>
             <p>Bad {badCounter}</p>
@@ -66,6 +67,7 @@ const App = () => {
             <Button handleClick={handleClickGood} text="Good" />
             <Button handleClick={handleClickNeutral} text="Neutral" />
             <Button handleClick={handleClickBad} text="Bad" />
+            <h1>Statistics</h1>
             <Statistics
                 goodCounter={goodCounter}
                 neutralCounter={neutralCounter}
