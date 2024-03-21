@@ -1,5 +1,30 @@
 import { useState } from "react";
 
+const Statistics = ({
+    goodCounter,
+    neutralCounter,
+    badCounter,
+    allCounter,
+    average,
+    positivePorcentage,
+}) => {
+    return (
+        <>
+            <h1>Statistics</h1>
+            <p>Good {goodCounter}</p>
+            <p>Neutral {neutralCounter}</p>
+            <p>Bad {badCounter}</p>
+            <p>All {allCounter}</p>
+            <p>Average {average}</p>
+            <p>Positive {positivePorcentage} %</p>
+        </>
+    );
+};
+
+const Button = ({ handleClick, text }) => (
+    <button onClick={handleClick}>{text}</button>
+);
+
 const App = () => {
     const [goodCounter, setGoodCounter] = useState(0);
     const [neutralCounter, setNeutralCounter] = useState(0);
@@ -41,19 +66,16 @@ const App = () => {
             <Button handleClick={handleClickGood} text="Good" />
             <Button handleClick={handleClickNeutral} text="Neutral" />
             <Button handleClick={handleClickBad} text="Bad" />
-            <h1>Statistics</h1>
-            <p>Good {goodCounter}</p>
-            <p>Neutral {neutralCounter}</p>
-            <p>Bad {badCounter}</p>
-            <p>All {allCounter}</p>
-            <p>Average {average}</p>
-            <p>Positive {positivePorcentage} %</p>
+            <Statistics
+                goodCounter={goodCounter}
+                neutralCounter={neutralCounter}
+                badCounter={badCounter}
+                allCounter={allCounter}
+                average={average}
+                positivePorcentage={positivePorcentage}
+            />
         </div>
     );
 };
-
-const Button = ({ handleClick, text }) => (
-    <button onClick={handleClick}>{text}</button>
-);
 
 export default App;
