@@ -4,12 +4,36 @@ const App = () => {
     const [goodCounter, setGoodCounter] = useState(0);
     const [neutralCounter, setNeutralCounter] = useState(0);
     const [badCounter, setBadCounter] = useState(0);
+    const [allCounter, setAllCounter] = useState(0);
+    const [average, setAverage] = useState(0);
+    const [positivePorcentage, setPositivePorcentage] = useState(0);
 
-    const handleClickGood = () => setGoodCounter(goodCounter + 1);
+    const handleClickGood = () => {
+        const updatedGoodCounter = goodCounter + 1;
+        setGoodCounter(updatedGoodCounter);
+        const updatedAllCounter = allCounter + 1;
+        setAllCounter(updatedAllCounter);
+        const newAvg = (updatedGoodCounter - badCounter) / updatedAllCounter;
+        setAverage(newAvg);
+        setPositivePorcentage((updatedGoodCounter / updatedAllCounter) * 100);
+    };
 
-    const handleClickNeutral = () => setNeutralCounter(neutralCounter + 1);
+    const handleClickNeutral = () => {
+        setNeutralCounter(neutralCounter + 1);
+        const updatedAllCounter = allCounter + 1;
+        setAllCounter(updatedAllCounter);
+        setPositivePorcentage((goodCounter / updatedAllCounter) * 100);
+    };
 
-    const handleClickBad = () => setBadCounter(badCounter + 1);
+    const handleClickBad = () => {
+        const updatedBadCounter = badCounter + 1;
+        setBadCounter(updatedBadCounter);
+        const updatedAllCounter = allCounter + 1;
+        setAllCounter(updatedAllCounter);
+        const newAvg = (goodCounter - updatedBadCounter) / updatedAllCounter;
+        setAverage(newAvg);
+        setPositivePorcentage((goodCounter / updatedAllCounter) * 100);
+    };
 
     return (
         <div>
@@ -21,6 +45,9 @@ const App = () => {
             <p>Good {goodCounter}</p>
             <p>Neutral {neutralCounter}</p>
             <p>Bad {badCounter}</p>
+            <p>All {allCounter}</p>
+            <p>Average {average}</p>
+            <p>Positive {positivePorcentage} %</p>
         </div>
     );
 };
