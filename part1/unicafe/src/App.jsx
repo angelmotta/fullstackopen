@@ -1,9 +1,10 @@
 import { useState } from "react";
 
 const StatisticLine = ({ text, value }) => (
-    <p>
-        {text} {value}
-    </p>
+    <tr>
+        <th>{text}</th>
+        <td>{value}</td>
+    </tr>
 );
 
 const Statistics = ({
@@ -18,12 +19,19 @@ const Statistics = ({
         <>No feedback given</>
     ) : (
         <>
-            <StatisticLine text="Good" value={goodCounter} />
-            <StatisticLine text="Neutral" value={neutralCounter} />
-            <StatisticLine text="Bad" value={badCounter} />
-            <StatisticLine text="All" value={allCounter} />
-            <StatisticLine text="Average" value={average} />
-            <StatisticLine text="Positive" value={positivePorcentage + " %"} />
+            <table>
+                <tbody>
+                    <StatisticLine text="Good" value={goodCounter} />
+                    <StatisticLine text="Neutral" value={neutralCounter} />
+                    <StatisticLine text="Bad" value={badCounter} />
+                    <StatisticLine text="All" value={allCounter} />
+                    <StatisticLine text="Average" value={average} />
+                    <StatisticLine
+                        text="Positive"
+                        value={positivePorcentage + " %"}
+                    />
+                </tbody>
+            </table>
         </>
     );
 };
