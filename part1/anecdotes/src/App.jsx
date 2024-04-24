@@ -12,23 +12,34 @@ const App = () => {
         "The only way to go fast, is to go well.",
     ];
 
+    const lenArray = anecdotes.length;
+    const votesArray = new Array(lenArray).fill(0);
+
     const getRandIndex = (lenArray) => {
         return Math.floor(Math.random() * lenArray);
     };
 
-    const lenArray = anecdotes.length;
     const randIdx = getRandIndex(lenArray);
     const [selected, setSelected] = useState(randIdx);
+    const [votes, setVotes] = useState(votesArray);
 
-    const handleOnClick = () => {
+    const handleOnClickNext = () => {
         const randIdx = getRandIndex(lenArray);
         setSelected(randIdx);
+    };
+
+    const handleOnClickVote = () => {
+        const updatedVotes = [...votes]; // create a copy
+        updatedVotes[selected] += 1; // mutate copy array (not directly the original array )
+        setVotes(updatedVotes); // update state using setState function and a new array as input
     };
 
     return (
         <div>
             <div>{anecdotes[selected]}</div>
-            <button onClick={handleOnClick}>next anecdote</button>
+            <div>has {votes[selected]} </div>
+            <button onClick={handleOnClickVote}>vote</button>
+            <button onClick={handleOnClickNext}>next anecdote</button>
         </div>
     );
 };
