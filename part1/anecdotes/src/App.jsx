@@ -1,5 +1,16 @@
 import { useState } from "react";
 
+const Anecdote = (props) => {
+    const { title, anecdote, votes } = props;
+    return (
+        <div>
+            <h1>{title}</h1>
+            <div>{anecdote}</div>
+            <div>has {votes} votes</div>
+        </div>
+    );
+};
+
 const App = () => {
     const anecdotes = [
         "If it hurts, do it more often.",
@@ -34,12 +45,43 @@ const App = () => {
         setVotes(updatedVotes); // update state using setState function and a new array as input
     };
 
+    const getAnecdoteMostVotes = () => {
+        let maxVotes = -1;
+        let idxAnecdote = -1;
+        votes.forEach((val, idx) => {
+            if (val > maxVotes) {
+                maxVotes = val;
+                idxAnecdote = idx;
+            }
+        });
+
+        const ans = {
+            idx: idxAnecdote,
+            votes: maxVotes,
+        };
+        return ans;
+    };
+
+    const idxVotesObj = getAnecdoteMostVotes();
+    const numVotesMaxAnecdote = idxVotesObj.votes;
+    const anecdotemaxVotes = anecdotes[idxVotesObj.idx];
+
+    const anecdoteOfDay = anecdotes[selected];
+    const numVotesAnecdoteDay = votes[selected];
     return (
         <div>
-            <div>{anecdotes[selected]}</div>
-            <div>has {votes[selected]} </div>
+            <Anecdote
+                title="Anecdote of the day"
+                anecdote={anecdoteOfDay}
+                votes={numVotesAnecdoteDay}
+            />
             <button onClick={handleOnClickVote}>vote</button>
             <button onClick={handleOnClickNext}>next anecdote</button>
+            <Anecdote
+                title="Anecdote with most votes"
+                anecdote={anecdotemaxVotes}
+                votes={numVotesMaxAnecdote}
+            />
         </div>
     );
 };
