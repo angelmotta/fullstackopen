@@ -9,16 +9,26 @@ const App = () => {
         setNewName(e.target.value);
     };
 
+    const isAlreadyRegistered = (newPerson) => {
+        console.log(`Check if is already registered`);
+        console.log(newPerson);
+        const res = persons.find((person) => person.name === newPerson.name);
+        console.log("isAlreadyRegistered?: ", res);
+        return res !== undefined;
+    };
+
     const handleOnSubmit = (e) => {
         e.preventDefault();
         const newPerson = {
             name: newName,
         };
 
-        console.log(newPerson);
+        if (isAlreadyRegistered(newPerson)) {
+            const message = `${newPerson.name} is already added to phonebook`;
+            alert(message);
+            return;
+        }
         const listNames = [...persons, newPerson];
-        console.log(listNames);
-
         setPersons(listNames);
         setNewName("");
     };
