@@ -1,6 +1,46 @@
 import { useState } from "react";
 import "./styles/main.css";
 
+const Filter = ({ searchName, handleOnChange }) => {
+    return (
+        <div>
+            filter shown with
+            <input value={searchName} onChange={handleOnChange} />
+        </div>
+    );
+};
+
+const PersonForm = ({
+    handleOnSubmit,
+    newName,
+    handleOnChangeName,
+    newNumber,
+    handleOnChangeNumber,
+}) => {
+    return (
+        <form onSubmit={handleOnSubmit}>
+            <div>
+                name: <input value={newName} onChange={handleOnChangeName} />
+            </div>
+            <div>
+                number:{" "}
+                <input value={newNumber} onChange={handleOnChangeNumber} />
+            </div>
+            <div>
+                <button type="submit">add</button>
+            </div>
+        </form>
+    );
+};
+
+const Person = ({ name, number }) => {
+    return (
+        <li>
+            {name} {number}
+        </li>
+    );
+};
+
 const App = () => {
     const [persons, setPersons] = useState([
         { name: "Arto Hellas", number: "040-123456", id: 1 },
@@ -69,7 +109,7 @@ const App = () => {
 
         // Update UI
         if (searchName === "") {
-            console.log(`Blank text is included in all contacts`);
+            console.log(`Search "Blank text" return all contacts`);
             setPersonsFiltered(listNames); // all contacts
         } else {
             // Include new person only if it meets the filter text already applied
@@ -86,32 +126,27 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-
-            <div>
-                filter shown with
-                <input value={searchName} onChange={handleOnChangeSearchName} />
-            </div>
+            <Filter
+                searchName={searchName}
+                handleOnChange={handleOnChangeSearchName}
+            />
 
             <h2>add a new</h2>
-            <form onSubmit={handleOnSubmit}>
-                <div>
-                    name:{" "}
-                    <input value={newName} onChange={handleOnChangeName} />
-                </div>
-                <div>
-                    number:{" "}
-                    <input value={newNumber} onChange={handleOnChangeNumber} />
-                </div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
+            <PersonForm
+                handleOnSubmit={handleOnSubmit}
+                newName={newName}
+                newNumber={newNumber}
+                handleOnChangeName={handleOnChangeName}
+                handleOnChangeNumber={handleOnChangeNumber}
+            />
             <h2>Numbers</h2>
             <ul>
                 {personsFiltered.map((person) => (
-                    <li key={person.name}>
-                        {person.name} {person.number}
-                    </li>
+                    <Person
+                        key={person.name}
+                        name={person.name}
+                        number={person.number}
+                    />
                 ))}
             </ul>
         </div>
