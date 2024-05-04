@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import "./styles/main.css";
 
 const Filter = ({ searchName, handleOnChange }) => {
@@ -42,17 +43,22 @@ const Person = ({ name, number }) => {
 };
 
 const App = () => {
-    const [persons, setPersons] = useState([
-        { name: "Arto Hellas", number: "040-123456", id: 1 },
-        { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-        { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-        { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-        { name: "Mayra Chávez", number: "51-1-123422", id: 5 },
-    ]);
+    const [persons, setPersons] = useState([]);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [searchName, setSearchName] = useState("");
-    const [personsFiltered, setPersonsFiltered] = useState(persons);
+    const [personsFiltered, setPersonsFiltered] = useState([]);
+
+    useEffect(() => {
+        console.log(`useEffect execution`);
+        const serverEndpoint = "http://localhost:3001/persons";
+        axios.get(serverEndpoint).then((res) => {
+            console.log(res.data);
+            const listPersons = res.data;
+            setPersons(listPersons);
+            setPersonsFiltered(listPersons);
+        });
+    }, []);
 
     const handleOnChangeName = (e) => {
         setNewName(e.target.value);
