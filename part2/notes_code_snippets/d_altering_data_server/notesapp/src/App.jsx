@@ -49,16 +49,28 @@ const App = (props) => {
         // create a copy note obj and mutate here the property (shallow copy)
         const changedNoteObj = { ...note, important: !note.important };
 
-        noteService.update(noteId, changedNoteObj).then((returnedNote) => {
-            setNotes(
-                notes.map((noteObj) =>
-                    // update state accoding to backend response for specific resource
-                    noteObj.id !== noteId ? noteObj : returnedNote
-                )
-            );
-        });
+        noteService
+            .update(noteId, changedNoteObj)
+            .then((returnedNote) => {
+                console.log(`then....returnedNote`);
+                console.log(returnedNote);
+                setNotes(
+                    notes.map((noteObj) =>
+                        // update state accoding to backend response for specific resource
+                        noteObj.id !== noteId ? noteObj : returnedNote
+                    )
+                );
+            })
+            .catch((error) => {
+                console.log(`catch error noteService.update()`);
+                alert(
+                    `the note '${note.content}' was already deleted from the server`
+                );
+                setNotes(notes.filter((noteObj) => noteObj.id !== noteId));
+            });
     };
-
+    console.log(`NotesToShow`);
+    console.log(notesToShow);
     return (
         <div>
             <h1>Notes</h1>
