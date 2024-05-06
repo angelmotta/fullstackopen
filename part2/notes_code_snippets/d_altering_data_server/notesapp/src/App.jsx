@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Note from "./components/Note";
+import noteService from "./services/notes";
 
 const App = (props) => {
     const [notes, setNotes] = useState([]);
@@ -11,10 +12,9 @@ const App = (props) => {
 
     useEffect(() => {
         console.log(`useEffect`);
-        axios.get("http://localhost:3001/notes").then((response) => {
-            console.log(`promise fullfiled`);
-            const notes = response.data;
-            setNotes(notes);
+        noteService.getAll().then((initialNotes) => {
+            // promise fullfiled
+            setNotes(initialNotes);
         });
     }, []);
     console.log(`render component with: ${notes.length} notes`);
@@ -26,9 +26,9 @@ const App = (props) => {
             important: Math.random() < 0.5,
         };
 
-        axios.post(urlNotes, newNoteObject).then((res) => {
+        noteService.create(newNoteObject).then((returnedNote) => {
             console.log(`response post request`);
-            setNotes(notes.concat(res.data)); // using concat (never mutate state directly)
+            setNotes(notes.concat(returnedNote)); // using concat (never mutate state directly)
             setNewNote("");
         });
     };
@@ -44,17 +44,16 @@ const App = (props) => {
 
     const toggleImportanceOf = (noteId) => {
         console.log(`importance of note id ${noteId} needs to be toggled`);
-        const urlNote = `http://localhost:3001/notes/${noteId}`;
-        // don't use note obj to mutate a property as this is a reference in the array (state variable)
+        // don't use `note` object to mutate a property as this is a reference in the array (state variable)
         const note = notes.find((note) => note.id === noteId); // find return a reference of the object in the array
-        // create a copy note obj and mutate here the property
+        // create a copy note obj and mutate here the property (shallow copy)
         const changedNoteObj = { ...note, important: !note.important };
 
-        axios.put(urlNote, changedNoteObj).then((res) => {
+        noteService.update(noteId, changedNoteObj).then((returnedNote) => {
             setNotes(
                 notes.map((noteObj) =>
                     // update state accoding to backend response for specific resource
-                    noteObj.id !== noteId ? noteObj : res.data
+                    noteObj.id !== noteId ? noteObj : returnedNote
                 )
             );
         });
