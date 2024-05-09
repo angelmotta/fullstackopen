@@ -43,7 +43,7 @@ const Person = ({ name, number }) => {
 };
 
 const App = () => {
-    const [persons, setPersons] = useState([]);
+    const [persons, setPersons] = useState([]); // all contacts
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [searchName, setSearchName] = useState("");
@@ -96,7 +96,7 @@ const App = () => {
         return res !== undefined;
     };
 
-    const handleOnSubmit = (e) => {
+    const handleAddNewNumber = (e) => {
         e.preventDefault();
         const newPerson = {
             name: newName,
@@ -108,25 +108,32 @@ const App = () => {
             alert(message);
             return;
         }
-        const listNames = [...persons, newPerson];
-        setPersons(listNames);
-        setNewName("");
-        setNewNumber("");
-
-        // Update UI
-        if (searchName === "") {
-            console.log(`Search "Blank text" return all contacts`);
-            setPersonsFiltered(listNames); // all contacts
-        } else {
-            // Include new person only if it meets the filter text already applied
-            console.log(
-                `check if new name ${newPerson.name.toLowerCase()} includes the substring ${searchName}`
-            );
-            if (newPerson.name.toLowerCase().includes(searchName)) {
-                console.log("yes it's included");
-                setPersonsFiltered([...personsFiltered, newPerson]);
+        // Make request to API and receive response Obj
+        const serverEndpoint = "http://localhost:3001/persons";
+        axios.post(serverEndpoint, newPerson).then((res) => {
+            console.log(`received data from API`);
+            console.log(res.data);
+            const savedPerson = res.data;
+            // Set newPersonObj received from API and update state
+            const listNames = [...persons, newPerson];
+            setPersons(listNames);
+            setNewName("");
+            setNewNumber("");
+            // Update UI
+            if (searchName === "") {
+                console.log(`Search "Blank text" return all contacts`);
+                setPersonsFiltered(listNames); // all contacts
+            } else {
+                // Include new person only if it meets the filter text already applied
+                console.log(
+                    `check if new name ${newPerson.name.toLowerCase()} includes the substring ${searchName}`
+                );
+                if (newPerson.name.toLowerCase().includes(searchName)) {
+                    console.log("yes it's included");
+                    setPersonsFiltered([...personsFiltered, newPerson]);
+                }
             }
-        }
+        });
     };
 
     return (
@@ -139,7 +146,7 @@ const App = () => {
 
             <h2>add a new</h2>
             <PersonForm
-                handleOnSubmit={handleOnSubmit}
+                handleOnSubmit={handleAddNewNumber}
                 newName={newName}
                 newNumber={newNumber}
                 handleOnChangeName={handleOnChangeName}
