@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import peopleService from "./services/people";
 import "./styles/main.css";
+
+// const { create, getAll } = peopleService;
 
 const Filter = ({ searchName, handleOnChange }) => {
     return (
@@ -51,10 +54,10 @@ const App = () => {
 
     useEffect(() => {
         console.log(`useEffect execution`);
-        const serverEndpoint = "http://localhost:3001/persons";
-        axios.get(serverEndpoint).then((res) => {
-            console.log(res.data);
-            const listPersons = res.data;
+        peopleService.getAll().then((listPersons) => {
+            console.log(`API response:`);
+            console.log(listPersons);
+            // Update state
             setPersons(listPersons);
             setPersonsFiltered(listPersons);
         });
@@ -109,31 +112,35 @@ const App = () => {
             return;
         }
         // Make request to API and receive response Obj
-        const serverEndpoint = "http://localhost:3001/persons";
-        axios.post(serverEndpoint, newPerson).then((res) => {
-            console.log(`received data from API`);
-            console.log(res.data);
-            const savedPerson = res.data;
-            // Set newPersonObj received from API and update state
-            const listNames = [...persons, newPerson];
-            setPersons(listNames);
-            setNewName("");
-            setNewNumber("");
-            // Update UI
-            if (searchName === "") {
-                console.log(`Search "Blank text" return all contacts`);
-                setPersonsFiltered(listNames); // all contacts
-            } else {
-                // Include new person only if it meets the filter text already applied
-                console.log(
-                    `check if new name ${newPerson.name.toLowerCase()} includes the substring ${searchName}`
-                );
-                if (newPerson.name.toLowerCase().includes(searchName)) {
-                    console.log("yes it's included");
-                    setPersonsFiltered([...personsFiltered, newPerson]);
+        peopleService
+            .create(newPerson)
+            .then((savedPerson) => {
+                console.log(`received data from API`);
+                console.log(savedPerson);
+                // Set newPersonObj received from API and update state
+                const listNames = [...persons, savedPerson];
+                setPersons(listNames);
+                setNewName("");
+                setNewNumber("");
+                // Update UI
+                if (searchName === "") {
+                    console.log(`Search "Blank text" return all contacts`);
+                    setPersonsFiltered(listNames); // all contacts
+                } else {
+                    // Include new person only if it meets the filter text already applied
+                    console.log(
+                        `check if new name ${newPerson.name.toLowerCase()} includes the substring ${searchName}`
+                    );
+                    if (newPerson.name.toLowerCase().includes(searchName)) {
+                        console.log("yes it's included");
+                        setPersonsFiltered([...personsFiltered, newPerson]);
+                    }
                 }
-            }
-        });
+            })
+            .catch((error) => {
+                console.log(`something went wrong: create person`);
+                console.error(error);
+            });
     };
 
     return (
