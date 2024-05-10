@@ -41,7 +41,7 @@ const Person = ({ name, number, handleDelete, idPerson }) => {
     return (
         <li>
             {name} {number}{" "}
-            <button onClick={() => handleDelete(idPerson)}>Delete</button>
+            <button onClick={() => handleDelete(name, idPerson)}>Delete</button>
         </li>
     );
 };
@@ -144,8 +144,12 @@ const App = () => {
             });
     };
 
-    const handleDeletePerson = (idPerson) => {
-        console.log(`Delete person with id ${idPerson}`);
+    const handleDeletePerson = (name, idPerson) => {
+        console.log(`Use request delete person with id ${idPerson}`);
+        if (!confirm(`Are you sure you want to delete '${name}'`)) {
+            return;
+        }
+        console.log(`Deleting person with id ${idPerson}`);
         peopleService.deletePerson(idPerson).then((userDeleted) => {
             console.log(`HandleDeletePerson receive response`);
             console.log(userDeleted);
