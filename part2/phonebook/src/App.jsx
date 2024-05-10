@@ -37,10 +37,11 @@ const PersonForm = ({
     );
 };
 
-const Person = ({ name, number }) => {
+const Person = ({ name, number, handleDelete, idPerson }) => {
     return (
         <li>
-            {name} {number}
+            {name} {number}{" "}
+            <button onClick={() => handleDelete(idPerson)}>Delete</button>
         </li>
     );
 };
@@ -143,6 +144,28 @@ const App = () => {
             });
     };
 
+    const handleDeletePerson = (idPerson) => {
+        console.log(`Delete person with id ${idPerson}`);
+        peopleService.deletePerson(idPerson).then((userDeleted) => {
+            console.log(`HandleDeletePerson receive response`);
+            console.log(userDeleted);
+            // Update UI (remove deleted person from view)
+            const listPersons = persons.filter(
+                (personObj) => personObj.id !== userDeleted.id
+            );
+            setPersons(listPersons);
+            if (searchName === "") {
+                console.log(`Search "Blank text" return all contacts`);
+                setPersonsFiltered(listPersons); // all contacts
+            } else {
+                const theFilterList = listPersons.filter((personObj) =>
+                    personObj.name.toLowerCase().includes(searchName)
+                );
+                setPersonsFiltered(theFilterList);
+            }
+        });
+    };
+
     return (
         <div>
             <h2>Phonebook</h2>
@@ -163,9 +186,11 @@ const App = () => {
             <ul>
                 {personsFiltered.map((person) => (
                     <Person
-                        key={person.name}
+                        key={person.id}
                         name={person.name}
                         number={person.number}
+                        handleDelete={handleDeletePerson}
+                        idPerson={person.id}
                     />
                 ))}
             </ul>

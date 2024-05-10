@@ -5,7 +5,7 @@ const baseURL = "http://localhost:3001/persons";
 const create = (personObj) => {
     return new Promise((resolve, reject) => {
         if (!personObj) {
-            console.log(`This is an error`);
+            console.log(`This is an error: null parameter`);
             reject(new Error("Person Object can not be null"));
             return;
         }
@@ -19,4 +19,19 @@ const getAll = () => {
     return axios.get(baseURL).then((response) => response.data);
 };
 
-export default { create, getAll };
+const deletePerson = (idPerson) => {
+    return new Promise((resolve, reject) => {
+        if (!idPerson) {
+            reject(new Error("idPerson can not be null"));
+            return;
+        }
+        return axios.delete(`${baseURL}/${idPerson}`).then((response) => {
+            console.log(`Delete request API was successfully done`);
+            console.log(response);
+            console.log(response.data);
+            resolve(response.data);
+        });
+    });
+};
+
+export default { create, getAll, deletePerson };
