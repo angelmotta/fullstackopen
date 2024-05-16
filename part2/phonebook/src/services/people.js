@@ -15,6 +15,21 @@ const create = (personObj) => {
     });
 };
 
+const update = (personObj) => {
+    return new Promise((resolve, reject) => {
+        if (!personObj) {
+            console.log(
+                `update operation - The argument personObj received is null`
+            );
+            reject(new Error(`Person Object can not be null`));
+            return;
+        }
+        return axios
+            .put(`${baseURL}/${personObj.id}`, personObj)
+            .then((response) => resolve(response.data));
+    });
+};
+
 const getAll = () => {
     return axios.get(baseURL).then((response) => response.data);
 };
@@ -34,4 +49,4 @@ const deletePerson = (idPerson) => {
     });
 };
 
-export default { create, getAll, deletePerson };
+export default { create, getAll, deletePerson, update };

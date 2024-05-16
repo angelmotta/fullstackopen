@@ -97,7 +97,7 @@ const App = () => {
         console.log(newPerson);
         const res = persons.find((person) => person.name === newPerson.name);
         console.log("isAlreadyRegistered?: ", res);
-        return res !== undefined;
+        return res;
     };
 
     const handleAddNewNumber = (e) => {
@@ -107,41 +107,81 @@ const App = () => {
             number: newNumber,
         };
 
-        if (isAlreadyRegistered(newPerson)) {
-            const message = `${newPerson.name} is already added to phonebook`;
-            alert(message);
-            return;
-        }
-        // Make request to API and receive response Obj
-        peopleService
-            .create(newPerson)
-            .then((savedPerson) => {
-                console.log(`received data from API`);
-                console.log(savedPerson);
-                // Set newPersonObj received from API and update state
-                const listNames = [...persons, savedPerson];
-                setPersons(listNames);
-                setNewName("");
-                setNewNumber("");
-                // Update UI
-                if (searchName === "") {
-                    console.log(`Search "Blank text" return all contacts`);
-                    setPersonsFiltered(listNames); // all contacts
-                } else {
-                    // Include new person only if it meets the filter text already applied
-                    console.log(
-                        `check if new name ${newPerson.name.toLowerCase()} includes the substring ${searchName}`
-                    );
-                    if (newPerson.name.toLowerCase().includes(searchName)) {
-                        console.log("yes it's included");
-                        setPersonsFiltered([...personsFiltered, newPerson]);
+        const personRegistered = isAlreadyRegistered(newPerson);
+
+        if (personRegistered) {
+            const message = `${newPerson.name} is already added to phonebook. Do you want to replace the old number with this new one?`;
+            if (confirm(message)) {
+                console.log(`Start update operation`);
+                newPerson.id = personRegistered.id;
+                console.log(newPerson);
+                peopleService
+                    .update(newPerson)
+                    .then((updatedPerson) => {
+                        console.log(`Update person received from API`);
+                        console.log(updatedPerson);
+                        // Update local state of Contacts
+                        const listPersons = persons.filter(
+                            (personObj) => personObj.id !== updatedPerson.id
+                        );
+                        const updatedList = [...listPersons, updatedPerson];
+                        setPersons(updatedList);
+                        setNewName("");
+                        setNewNumber("");
+                        // Update UI
+                        if (searchName === "") {
+                            console.log(
+                                `Search "Blank text" return all contacts`
+                            );
+                            setPersonsFiltered(updatedList); // all contacts
+                        } else {
+                            // Include new person only if it meets the filter text already applied
+                            const newFilteredList = updatedList.filter(
+                                (personObj) =>
+                                    personObj.name
+                                        .toLowerCase()
+                                        .includes(searchName)
+                            );
+                            setPersonsFiltered(newFilteredList);
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(`Update operation error`);
+                        console.error(error);
+                    });
+            }
+        } else {
+            // Make request to API and receive response Obj
+            peopleService
+                .create(newPerson)
+                .then((savedPerson) => {
+                    console.log(`received data from API`);
+                    console.log(savedPerson);
+                    // Set newPersonObj received from API and update state
+                    const listNames = [...persons, savedPerson];
+                    setPersons(listNames);
+                    setNewName("");
+                    setNewNumber("");
+                    // Update UI
+                    if (searchName === "") {
+                        console.log(`Search "Blank text" return all contacts`);
+                        setPersonsFiltered(listNames); // all contacts
+                    } else {
+                        // Include new person only if it meets the filter text already applied
+                        console.log(
+                            `check if new name ${newPerson.name.toLowerCase()} includes the substring ${searchName}`
+                        );
+                        if (newPerson.name.toLowerCase().includes(searchName)) {
+                            console.log("yes it's included");
+                            setPersonsFiltered([...personsFiltered, newPerson]);
+                        }
                     }
-                }
-            })
-            .catch((error) => {
-                console.log(`something went wrong: create person`);
-                console.error(error);
-            });
+                })
+                .catch((error) => {
+                    console.log(`something went wrong: create person`);
+                    console.error(error);
+                });
+        }
     };
 
     const handleDeletePerson = (name, idPerson) => {
