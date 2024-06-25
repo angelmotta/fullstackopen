@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Note from "./components/Note";
+import Notification from "./components/Notification";
 import noteService from "./services/notes";
 
 const App = (props) => {
     const [notes, setNotes] = useState([]);
     const [newNote, setNewNote] = useState("my new note");
     const [showAll, setShowAll] = useState(true);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     const urlNotes = "http://localhost:3001/notes";
 
@@ -17,6 +18,7 @@ const App = (props) => {
             setNotes(initialNotes);
         });
     }, []);
+
     console.log(`render component with: ${notes.length} notes`);
 
     const addNoteEventHandler = (event) => {
@@ -44,7 +46,8 @@ const App = (props) => {
 
     const toggleImportanceOf = (noteId) => {
         console.log(`importance of note id ${noteId} needs to be toggled`);
-        // don't use `note` object to mutate a property as this is a reference in the array (state variable)
+        // don't use `note` reference object to mutate a property
+        // note is a reference to an item in the notes array in the component's state
         const note = notes.find((note) => note.id === noteId); // find return a reference of the object in the array
         // create a copy note obj and mutate here the property (shallow copy)
         const changedNoteObj = { ...note, important: !note.important };
@@ -63,9 +66,12 @@ const App = (props) => {
             })
             .catch((error) => {
                 console.log(`catch error noteService.update()`);
-                alert(
+                setErrorMessage(
                     `the note '${note.content}' was already deleted from the server`
                 );
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
                 setNotes(notes.filter((noteObj) => noteObj.id !== noteId));
             });
     };
@@ -74,6 +80,7 @@ const App = (props) => {
     return (
         <div>
             <h1>Notes</h1>
+            <Notification message={errorMessage} />
             <div>
                 <button onClick={() => setShowAll(!showAll)}>
                     Show {showAll ? "important" : "all"} notes
