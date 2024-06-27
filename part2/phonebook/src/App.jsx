@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import Notification from "./components/Notification";
 import peopleService from "./services/people";
 import "./styles/main.css";
 
@@ -52,6 +52,7 @@ const App = () => {
     const [newNumber, setNewNumber] = useState("");
     const [searchName, setSearchName] = useState("");
     const [personsFiltered, setPersonsFiltered] = useState([]);
+    const [statusMessage, setStatusMessage] = useState(null);
 
     useEffect(() => {
         console.log(`useEffect execution`);
@@ -128,6 +129,10 @@ const App = () => {
                         setPersons(updatedList);
                         setNewName("");
                         setNewNumber("");
+                        setStatusMessage(`Updated ${updatedPerson.name}`);
+                        setTimeout(() => {
+                            setStatusMessage(null);
+                        }, 5000);
                         // Update UI
                         if (searchName === "") {
                             console.log(
@@ -162,7 +167,11 @@ const App = () => {
                     setPersons(listNames);
                     setNewName("");
                     setNewNumber("");
-                    // Update UI
+                    setStatusMessage(`Added ${savedPerson.name}`);
+                    setTimeout(() => {
+                        setStatusMessage(null);
+                    }, 5000);
+                    // Update UI according te search bar status
                     if (searchName === "") {
                         console.log(`Search "Blank text" return all contacts`);
                         setPersonsFiltered(listNames); // all contacts
@@ -198,6 +207,10 @@ const App = () => {
                 (personObj) => personObj.id !== userDeleted.id
             );
             setPersons(listPersons);
+            setStatusMessage(`Deleted ${userDeleted.name}`);
+            setTimeout(() => {
+                setStatusMessage(null);
+            }, 5000);
             if (searchName === "") {
                 console.log(`Search "Blank text" return all contacts`);
                 setPersonsFiltered(listPersons); // all contacts
@@ -213,6 +226,7 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
+            <Notification message={statusMessage} />
             <Filter
                 searchName={searchName}
                 handleOnChange={handleOnChangeSearchName}
