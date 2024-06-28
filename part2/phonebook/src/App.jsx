@@ -294,7 +294,8 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <Notification statusMessage={statusMessage} />
+            {statusMessage && <Notification statusMessage={statusMessage} />}
+            {/* <Notification statusMessage={statusMessage} /> */}
             <Filter
                 searchName={searchName}
                 handleOnChange={handleOnChangeSearchName}

@@ -1,24 +1,4 @@
-/* ul li {
-    list-style-type: none;
-} */
-
-/* ul {
-    list-style: none;
-    padding-left: 0;
-} */
-
-.errorNotification {
-    color: red;
-    background: lightgrey;
-    font-size: 20px;
-    border-style: solid;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.successNotification {
-    color: green;
+.notification {
     background: lightgrey;
     font-size: 20px;
     border-style: solid;
