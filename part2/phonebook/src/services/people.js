@@ -26,7 +26,12 @@ const update = (personObj) => {
         }
         return axios
             .put(`${baseURL}/${personObj.id}`, personObj)
-            .then((response) => resolve(response.data));
+            .then((response) => resolve(response.data))
+            .catch((error) => {
+                console.log(`Update error received from API`);
+                console.log(error);
+                reject(error);
+            });
     });
 };
 
@@ -40,12 +45,21 @@ const deletePerson = (idPerson) => {
             reject(new Error("idPerson can not be null"));
             return;
         }
-        return axios.delete(`${baseURL}/${idPerson}`).then((response) => {
-            console.log(`Delete request API was successfully done`);
-            console.log(response);
-            console.log(response.data);
-            resolve(response.data);
-        });
+        return axios
+            .delete(`${baseURL}/${idPerson}`)
+            .then((response) => {
+                console.log(`Delete request API was successfully done`);
+                console.log(response);
+                console.log(response.data);
+                resolve(response.data);
+            })
+            .catch((error) => {
+                console.log(error);
+                console.log(error.message);
+                console.log(error.response.status);
+                console.log(`---**---`);
+                reject(error);
+            });
     });
 };
 

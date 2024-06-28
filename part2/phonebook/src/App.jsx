@@ -119,7 +119,9 @@ const App = () => {
                 peopleService
                     .update(newPerson)
                     .then((updatedPerson) => {
-                        console.log(`Update person received from API`);
+                        console.log(
+                            `Success Update: person data received from API`
+                        );
                         console.log(updatedPerson);
                         // Update local state of Contacts
                         const listPersons = persons.filter(
@@ -129,18 +131,21 @@ const App = () => {
                         setPersons(updatedList);
                         setNewName("");
                         setNewNumber("");
-                        setStatusMessage(`Updated ${updatedPerson.name}`);
+                        const statusOperation = {
+                            isSuccess: true,
+                            message: `Updated ${updatedPerson.name}`,
+                        };
+                        setStatusMessage(statusOperation);
                         setTimeout(() => {
                             setStatusMessage(null);
                         }, 5000);
-                        // Update UI
                         if (searchName === "") {
                             console.log(
                                 `Search "Blank text" return all contacts`
                             );
                             setPersonsFiltered(updatedList); // all contacts
                         } else {
-                            // Include new person only if it meets the filter text already applied
+                            // Keep filtered list
                             const newFilteredList = updatedList.filter(
                                 (personObj) =>
                                     personObj.name
@@ -151,8 +156,33 @@ const App = () => {
                         }
                     })
                     .catch((error) => {
-                        console.log(`Update operation error`);
-                        console.error(error);
+                        console.log(`Update API catch error received`);
+                        console.log(error);
+                        const statusCode = error.response.status;
+                        const messageError =
+                            statusCode === 404
+                                ? `Contact ${name} has already been removed from the server`
+                                : `Something went wrong`;
+                        const statusOperation = {
+                            isSuccess: false,
+                            message: messageError,
+                        };
+
+                        setStatusMessage(statusOperation);
+                        setTimeout(() => {
+                            setStatusMessage(null);
+                        }, 5000);
+                        // Get a fresh list of contacts from Server
+                        console.log(`---- get a fresh list -----`);
+                        peopleService.getAll().then((listPersons) => {
+                            console.log(`API response:`);
+                            console.log(listPersons);
+                            // Update state
+                            setPersons(listPersons);
+                            setPersonsFiltered(listPersons);
+                        });
+                        setNewName("");
+                        setNewNumber("");
                     });
             }
         } else {
@@ -167,7 +197,11 @@ const App = () => {
                     setPersons(listNames);
                     setNewName("");
                     setNewNumber("");
-                    setStatusMessage(`Added ${savedPerson.name}`);
+                    const statusOperation = {
+                        isSuccess: true,
+                        message: `Added ${savedPerson.name}`,
+                    };
+                    setStatusMessage(statusOperation);
                     setTimeout(() => {
                         setStatusMessage(null);
                     }, 5000);
@@ -194,39 +228,73 @@ const App = () => {
     };
 
     const handleDeletePerson = (name, idPerson) => {
-        console.log(`Use request delete person with id ${idPerson}`);
+        console.log(`Request delete person with id ${idPerson}`);
         if (!confirm(`Are you sure you want to delete '${name}'`)) {
             return;
         }
-        console.log(`Deleting person with id ${idPerson}`);
-        peopleService.deletePerson(idPerson).then((userDeleted) => {
-            console.log(`HandleDeletePerson receive response`);
-            console.log(userDeleted);
-            // Update UI (remove deleted person from view)
-            const listPersons = persons.filter(
-                (personObj) => personObj.id !== userDeleted.id
-            );
-            setPersons(listPersons);
-            setStatusMessage(`Deleted ${userDeleted.name}`);
-            setTimeout(() => {
-                setStatusMessage(null);
-            }, 5000);
-            if (searchName === "") {
-                console.log(`Search "Blank text" return all contacts`);
-                setPersonsFiltered(listPersons); // all contacts
-            } else {
-                const theFilterList = listPersons.filter((personObj) =>
-                    personObj.name.toLowerCase().includes(searchName)
+        console.log(`API request to delete person with id ${idPerson}`);
+        peopleService
+            .deletePerson(idPerson)
+            .then((userDeleted) => {
+                console.log(`Delete successfully`);
+                console.log(userDeleted);
+                const listPersons = persons.filter(
+                    (personObj) => personObj.id !== userDeleted.id
                 );
-                setPersonsFiltered(theFilterList);
-            }
-        });
+                setPersons(listPersons);
+                const statusOperation = {
+                    isSuccess: true,
+                    message: `Deleted ${userDeleted.name}`,
+                };
+
+                setStatusMessage(statusOperation);
+                setTimeout(() => {
+                    setStatusMessage(null);
+                }, 5000);
+                if (searchName === "") {
+                    console.log(`Search "Blank text" return all contacts`);
+                    setPersonsFiltered(listPersons); // all contacts
+                } else {
+                    const theFilterList = listPersons.filter((personObj) =>
+                        personObj.name.toLowerCase().includes(searchName)
+                    );
+                    setPersonsFiltered(theFilterList);
+                }
+            })
+            .catch((error) => {
+                console.log(`Delete operation: something went wrong`);
+                console.log(error);
+                console.log(`status code: ${error.response.status}`);
+                const statusCode = error.response.status;
+                const messageError =
+                    statusCode === 404
+                        ? `Contact ${name} has already been removed from the server`
+                        : `Something went wrong`;
+                const statusOperation = {
+                    isSuccess: false,
+                    message: messageError,
+                };
+
+                setStatusMessage(statusOperation);
+                setTimeout(() => {
+                    setStatusMessage(null);
+                }, 5000);
+                // Get a fresh list of contacts from Server
+                console.log(`---- get a fresh list -----`);
+                peopleService.getAll().then((listPersons) => {
+                    console.log(`API response:`);
+                    console.log(listPersons);
+                    // Update state
+                    setPersons(listPersons);
+                    setPersonsFiltered(listPersons);
+                });
+            });
     };
 
     return (
         <div>
             <h2>Phonebook</h2>
-            <Notification message={statusMessage} />
+            <Notification statusMessage={statusMessage} />
             <Filter
                 searchName={searchName}
                 handleOnChange={handleOnChangeSearchName}

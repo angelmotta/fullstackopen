@@ -1,9 +1,15 @@
-const Notification = ({ message }) => {
-    if (message === null) {
+const Notification = ({ statusMessage }) => {
+    console.log(statusMessage);
+    if (statusMessage === null) {
         return null;
     }
 
-    return <div className="successNotification">{message}</div>;
+    const classNameMessage = statusMessage.isSuccess
+        ? "successNotification"
+        : "errorNotification";
+    console.log(`className chosen: ${classNameMessage}`);
+
+    return <div className={classNameMessage}>{statusMessage.message}</div>;
 };
 
 export default Notification;
