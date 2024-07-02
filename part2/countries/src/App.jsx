@@ -48,11 +48,22 @@ const App = () => {
     };
 
     const onChangeCountry = (e) => {
-        let country = e.target.value;
-        country = country.toLowerCase();
-        setCountry(country);
-        console.log(`search input:`);
-        console.log(country);
+        let countrySearch = e.target.value;
+        setCountry(countrySearch);
+        countrySearch = countrySearch.toLowerCase();
+        let searchResult = countries.filter((countryObj) => {
+            let countryName = countryObj.name.toLowerCase();
+            return countryName.includes(countrySearch);
+        });
+
+        if (searchResult.length > 10) {
+            // Update State of result component (too many results)
+            console.log(`Too many matches, specify another filter`);
+            return;
+        }
+
+        console.log(searchResult);
+        // Update State result (list of result or single country)
     };
 
     return (
