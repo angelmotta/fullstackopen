@@ -10,9 +10,16 @@ const Filter = ({ searchCountry, handleOnChange }) => {
     );
 };
 
+const Result = ({ searchResult }) => {
+    console.log(`render result`);
+    console.log(searchResult);
+    return <div>results...</div>;
+};
+
 const App = () => {
     const [country, setCountry] = useState("");
     const [countries, setCountries] = useState([]);
+    const [result, setResult] = useState(null);
 
     useEffect(() => {
         console.log(`useEffect execution`);
@@ -50,26 +57,49 @@ const App = () => {
     const onChangeCountry = (e) => {
         let countrySearch = e.target.value;
         setCountry(countrySearch);
+        if (countrySearch.length === 0) {
+            setResult(null);
+            return;
+        }
+
         countrySearch = countrySearch.toLowerCase();
         let searchResult = countries.filter((countryObj) => {
             let countryName = countryObj.name.toLowerCase();
             return countryName.includes(countrySearch);
         });
 
+        let resultObj;
         if (searchResult.length > 10) {
             // Update State of result component (too many results)
-            console.log(`Too many matches, specify another filter`);
-            return;
+            console.log(`Hey!! Too many matches, specify another filter`);
+            resultObj = {
+                success: false,
+                list: [`Too many matches, specify another filter`],
+            };
+        } else if (2 <= searchResult.length && searchResult.length <= 10) {
+            resultObj = {
+                success: false,
+                list: searchResult,
+            };
+        } else if (searchResult.length === 1) {
+            resultObj = {
+                success: true,
+                country: searchResult[0],
+            };
+        } else {
+            resultObj = {
+                success: false,
+                list: [`Country not found`],
+            };
         }
-
-        console.log(searchResult);
-        // Update State result (list of result or single country)
+        setResult(resultObj);
     };
 
     return (
         <div>
             <h1>Countries App</h1>
             <Filter searchCountry={country} handleOnChange={onChangeCountry} />
+            {result && <Result searchResult={result} />}
         </div>
     );
 };
