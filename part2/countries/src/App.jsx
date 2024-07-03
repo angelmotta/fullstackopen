@@ -10,10 +10,53 @@ const Filter = ({ searchCountry, handleOnChange }) => {
     );
 };
 
+const MessageSearch = ({ message }) => {
+    return <div>{message}</div>;
+};
+
+const CountryResult = ({ country }) => {
+    console.log(country);
+    return (
+        <div>
+            <h1>{country.name}</h1>
+            <div>Capital: {country.capital}</div>
+            <div>
+                Area: {country.area} km<sup>2</sup>
+            </div>
+            <h3>Languages</h3>
+            <ul>
+                {country.languages.map((langElem, idx) => (
+                    <li key={idx}>{langElem}</li>
+                ))}
+            </ul>
+            <img src={country.flag}></img>
+        </div>
+    );
+};
+
+const ListCountries = ({ countries }) => {
+    return (
+        <div>
+            {countries.map((countryObj, idx) => (
+                <div key={idx}>{countryObj.name}</div>
+            ))}
+        </div>
+    );
+};
+
 const Result = ({ searchResult }) => {
     console.log(`render result`);
+    if (!searchResult) {
+        return null;
+    }
     console.log(searchResult);
-    return <div>results...</div>;
+    if (searchResult.success) {
+        return <CountryResult country={searchResult.country} />;
+    } else if (searchResult.list.length === 0) {
+        return <MessageSearch message={searchResult.message} />;
+    } else {
+        return <ListCountries countries={searchResult.list} />;
+    }
 };
 
 const App = () => {
@@ -44,7 +87,7 @@ const App = () => {
 
             const country = {
                 name: countryObj.name?.common,
-                capital: countryObj.capital ? countryObj.capital[1] : "unknown",
+                capital: countryObj.capital ? countryObj.capital[0] : "unknown",
                 area: countryObj.area,
                 languages: listLang,
                 flag: countryObj.flags?.png,
@@ -74,7 +117,8 @@ const App = () => {
             console.log(`Hey!! Too many matches, specify another filter`);
             resultObj = {
                 success: false,
-                list: [`Too many matches, specify another filter`],
+                list: [],
+                message: `Too many matches, specify another filter`,
             };
         } else if (2 <= searchResult.length && searchResult.length <= 10) {
             resultObj = {
@@ -89,7 +133,8 @@ const App = () => {
         } else {
             resultObj = {
                 success: false,
-                list: [`Country not found`],
+                list: [],
+                message: `Country not found`,
             };
         }
         setResult(resultObj);
