@@ -34,17 +34,22 @@ const CountryResult = ({ country }) => {
     );
 };
 
-const ListCountries = ({ countries }) => {
+const ListCountries = ({ countries, updateResult }) => {
     return (
         <div>
             {countries.map((countryObj, idx) => (
-                <div key={idx}>{countryObj.name}</div>
+                <div key={idx}>
+                    {countryObj.name}
+                    <button onClick={() => updateResult(countryObj)}>
+                        Show
+                    </button>
+                </div>
             ))}
         </div>
     );
 };
 
-const Result = ({ searchResult }) => {
+const Result = ({ searchResult, updateResult }) => {
     console.log(`render result`);
     if (!searchResult) {
         return null;
@@ -55,7 +60,12 @@ const Result = ({ searchResult }) => {
     } else if (searchResult.list.length === 0) {
         return <MessageSearch message={searchResult.message} />;
     } else {
-        return <ListCountries countries={searchResult.list} />;
+        return (
+            <ListCountries
+                countries={searchResult.list}
+                updateResult={updateResult}
+            />
+        );
     }
 };
 
@@ -140,11 +150,24 @@ const App = () => {
         setResult(resultObj);
     };
 
+    const updateResultCountry = (countryObj) => {
+        const resultObj = {
+            success: true,
+            country: countryObj,
+        };
+        setResult(resultObj);
+    };
+
     return (
         <div>
             <h1>Countries App</h1>
             <Filter searchCountry={country} handleOnChange={onChangeCountry} />
-            {result && <Result searchResult={result} />}
+            {result && (
+                <Result
+                    searchResult={result}
+                    updateResult={updateResultCountry}
+                />
+            )}
         </div>
     );
 };
