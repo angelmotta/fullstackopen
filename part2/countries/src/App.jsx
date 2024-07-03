@@ -76,13 +76,15 @@ const App = () => {
 
     useEffect(() => {
         console.log(`useEffect execution`);
-        console.log(`Fetching data for countries...`);
-        countriesService.getAll().then((listCountries) => {
-            console.log(`response API: get all countries`);
-            console.log(`${listCountries.length} countries in list`);
-            const listNames = getListCountries(listCountries);
-            setCountries(listNames);
-        });
+        if (countries.length === 0) {
+            console.log(`Fetching data for countries...`);
+            countriesService.getAll().then((listCountries) => {
+                console.log(`response API: get all countries`);
+                console.log(`${listCountries.length} countries in list`);
+                const listNames = getListCountries(listCountries);
+                setCountries(listNames);
+            });
+        }
     }, []);
 
     const getListCountries = (listObjCountries) => {
